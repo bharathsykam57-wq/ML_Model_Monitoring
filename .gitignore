@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# OS
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data (raw / large files)
+data/raw/
+data/production_batches/
+
+# Logs & reports
+*.log
+
+# Environment files
+.env
