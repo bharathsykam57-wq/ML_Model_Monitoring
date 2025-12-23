@@ -13,9 +13,16 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# Data (raw / large files)
-data/raw/
-data/production_batches/
+# Data (ignore files, not folders)
+data/raw/*
+data/reference/*
+data/production_batches/*
+
+# Keep folder structure
+!data/raw/.gitkeep
+!data/reference/.gitkeep
+!data/production_batches/.gitkeep
+
 
 # Logs & reports
 *.log
