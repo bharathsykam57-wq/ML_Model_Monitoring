@@ -1,0 +1,26 @@
+{
+  "batch": "production_batch_3_drift",
+  "features": {
+    "SeniorCitizen": "low",
+    "tenure": "low",
+    "MonthlyCharges": "low",
+    "TotalCharges": "low",
+    "gender": "low",
+    "Partner": "low",
+    "Dependents": "low",
+    "PhoneService": "low",
+    "MultipleLines": "low",
+    "InternetService": "low",
+    "OnlineSecurity": "low",
+    "OnlineBackup": "low",
+    "DeviceProtection": "low",
+    "TechSupport": "low",
+    "StreamingTV": "low",
+    "StreamingMovies": "low",
+    "Contract": "low",
+    "PaperlessBilling": "low",
+    "PaymentMethod": "low",
+    "Churn": "low"
+  },
+  "overall_status": "low"
+}
