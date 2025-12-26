@@ -1,95 +1,66 @@
-import json
+import pandas as pd
 from pathlib import Path
 
-DRIFT_REPORT_DIR = Path("monitoring/drift_reports")
-SEVERITY_OUTPUT_DIR = Path("monitoring/drift_severity")
-SEVERITY_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+# Importing drift storage function
+from store_drift_metrics import store_drift_metric
+
+# Paths
+REFERENCE_DATA_PATH = Path("data/reference/reference_data.csv")
+PRODUCTION_BATCH_DIR = Path("data/production_batches")
+
+# Drift severity thresholds
+LOW_THRESHOLD = 0.05
+MEDIUM_THRESHOLD = 0.15
 
 
-def numerical_severity(mean_diff, reference_std):
+def classify_drift(drift_score):
     """
-    Classifies drift severity for numerical features.
-
-    normalizing the mean difference by the reference standard deviation
-    so that severity is scale-invariant.
+    Converting a numeric drift score into a severity label.
     """
-    ratio = abs(mean_diff) / (reference_std + 1e-8)
-
-    if ratio < 0.05:
-        return "low"
-    elif ratio < 0.15:
-        return "medium"
+    if drift_score < LOW_THRESHOLD:
+        return "LOW"
+    elif drift_score < MEDIUM_THRESHOLD:
+        return "MEDIUM"
     else:
-        return "high"
+        return "HIGH"
 
 
-def categorical_severity(freq_diff):
+def compute_numeric_drift(reference, production):
     """
-    Classifying drift severity for categorical features
-    based on absolute frequency change.
+    Simple numeric drift: absolute mean difference.
     """
-    abs_diff = abs(freq_diff)
-
-    if abs_diff < 0.05:
-        return "low"
-    elif abs_diff < 0.15:
-        return "medium"
-    else:
-        return "high"
+    return abs(production.mean() - reference.mean())
 
 
 def main():
-    # Iterating through all drift reports 
-    for drift_file in DRIFT_REPORT_DIR.glob("*_drift.json"):
-        with open(drift_file) as f:
-            drift_data = json.load(f)
+    # Loading reference data
+    reference_df = pd.read_csv(REFERENCE_DATA_PATH)
 
-        # Initializing batch-level severity summary
-        severity_summary = {
-            "batch": drift_file.stem,
-            "features": {},
-            "overall_status": "low"
-        }
+    # Identifying numeric features only
+    numeric_features = reference_df.select_dtypes(exclude=["object"]).columns
 
-        # Processing each feature's drift statistics
-        for feature, stats in drift_data.items():
+    # Processing each production batch
+    for batch_file in sorted(PRODUCTION_BATCH_DIR.glob("production_batch_*.csv")):
+        batch_name = batch_file.stem
+        production_df = pd.read_csv(batch_file)
 
-            # Numerical feature: identified by presence of mean_difference
-            if "mean_difference" in stats:
-                severity = numerical_severity(
-                    stats["mean_difference"],
-                    stats["reference_std"]
-                )
+        for feature in numeric_features:
+            drift_score = compute_numeric_drift(
+                reference_df[feature],
+                production_df[feature]
+            )
 
-            # Categorical feature: stats is a dictionary of category frequencies
-            else:
-                severities = [
-                    categorical_severity(v["freq_difference"])
-                    for v in stats.values()
-                ]
+            drift_level = classify_drift(drift_score)
 
-                # Taking worst-case severity across categories
-                severity = (
-                    "high" if "high" in severities else
-                    "medium" if "medium" in severities else
-                    "low"
-                )
+            # Store drift result
+            store_drift_metric(
+                batch=batch_name,
+                feature=feature,
+                drift_score=drift_score,
+                drift_level=drift_level
+            )
 
-            # Storing feature-level severity
-            severity_summary["features"][feature] = severity
-
-            # Updating overall batch status (worst-case logic)
-            if severity == "high":
-                severity_summary["overall_status"] = "high"
-            elif severity == "medium" and severity_summary["overall_status"] != "high":
-                severity_summary["overall_status"] = "medium"
-
-        # Saving severity report
-        output_path = SEVERITY_OUTPUT_DIR / f"{drift_file.stem}_severity.json"
-        with open(output_path, "w") as f:
-            json.dump(severity_summary, f, indent=2)
-
-        print(f"Saved severity report: {output_path}")
+        print(f"Drift severity processed for {batch_name}")
 
 
 if __name__ == "__main__":

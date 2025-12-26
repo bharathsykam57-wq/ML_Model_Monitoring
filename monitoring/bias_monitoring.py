@@ -1,73 +1,76 @@
+"""
+Computes group-wise recall for sensitive attributes
+and stores results as a time-series CSV for alerting
+and auditing.
+"""
+
 import pandas as pd
 from pathlib import Path
 import joblib
-from sklearn.metrics import precision_score, recall_score
+from datetime import datetime
+from sklearn.metrics import recall_score
 
 # Paths
 MODEL_PATH = Path("models/baseline_model.joblib")
 PRODUCTION_BATCH_DIR = Path("data/production_batches")
-BIAS_OUTPUT_DIR = Path("monitoring/bias_reports")
+BIAS_METRICS_PATH = Path("monitoring/metrics_store/bias_metrics.csv")
 
-BIAS_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+BIAS_METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-# Sensitive attributes to monitor
+# Configuration
 SENSITIVE_FEATURES = ["gender", "SeniorCitizen", "Partner"]
+MIN_GROUP_SIZE = 30
 
-# Load trained model
+# Loading model
 model = joblib.load(MODEL_PATH)
 
+records = []
 
-def compute_group_metrics(df, feature):
-    """
-    Computing precision and recall on sensitive features.
-    """
-    results = []
-
-    for group_value in df[feature].unique():
-        group_df = df[df[feature] == group_value]
-
-        # Skipping very small groups (unstable metrics)
-        if len(group_df) < 30:
-            continue
-
-        X = group_df.drop(columns=["Churn"])
-        y_true = group_df["Churn"]
-
-        y_pred = model.predict(X)
-
-        precision = precision_score(y_true, y_pred, pos_label="Yes")
-        recall = recall_score(y_true, y_pred, pos_label="Yes")
-
-        results.append({
-            "group": group_value,
-            "count": len(group_df),
-            "precision": precision,
-            "recall": recall
-        })
-
-    return results
-
-
-
-# Process production batches
+# Processing production batches
 for batch_file in sorted(PRODUCTION_BATCH_DIR.glob("production_batch_*.csv")):
-    batch_df = pd.read_csv(batch_file)
+    df = pd.read_csv(batch_file)
 
     # Schema consistency
-    for col in batch_df.select_dtypes(include=["object"]).columns:
-        batch_df[col] = batch_df[col].astype(str)
+    for col in df.select_dtypes(include=["object"]).columns:
+        df[col] = df[col].astype(str)
 
-    batch_bias_report = {
-        "batch": batch_file.stem,
-        "features": {}
-    }
+    X_all = df.drop(columns=["Churn"])
+    y_all = df["Churn"]
 
+    y_pred_all = model.predict(X_all)
+
+    # Group-wise evaluation
     for feature in SENSITIVE_FEATURES:
-        batch_bias_report["features"][feature] = compute_group_metrics(
-            batch_df, feature
-        )
+        for group_value in df[feature].unique():
 
-    output_path = BIAS_OUTPUT_DIR / f"{batch_file.stem}_bias.json"
-    pd.Series(batch_bias_report).to_json(output_path, indent=2)
+            mask = df[feature] == group_value
+            group_size = mask.sum()
 
-    print(f"Saved bias report: {output_path}")
+            if group_size < MIN_GROUP_SIZE:
+                continue
+
+            recall = recall_score(
+                y_all[mask],
+                y_pred_all[mask],
+                pos_label="Yes"
+            )
+
+            records.append({
+                "timestamp": datetime.utcnow(),
+                "batch": batch_file.stem,
+                "feature": feature,
+                "group": str(group_value),
+                "group_size": group_size,
+                "recall": recall
+            })
+
+# Persist metrics
+bias_df = pd.DataFrame(records)
+
+if not bias_df.empty:
+    if BIAS_METRICS_PATH.exists():
+        bias_df.to_csv(BIAS_METRICS_PATH, mode="a", header=False, index=False)
+    else:
+        bias_df.to_csv(BIAS_METRICS_PATH, index=False)
+
+print("Bias & fairness monitoring completed successfully.")
