@@ -1,0 +1,2 @@
+timestamp,batch,action,reasons
+2025-12-27 14:55:29.654498,production_batch_5,RETRAIN,Precision below threshold (0.548 < 0.6); High drift detected in 3 features
