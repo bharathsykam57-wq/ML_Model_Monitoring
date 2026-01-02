@@ -1,3 +1,11 @@
+"""
+- Train a stable, interpretable baseline model
+- Enforce schema consistency discovered during EDA
+- Produce artifacts required for downstream monitoring:
+  - Trained model
+  - Evaluation metrics
+  - Feature schema alignment
+"""
 import pandas as pd
 from pathlib import Path
 import joblib
@@ -14,6 +22,10 @@ from sklearn.impute import SimpleImputer
 REFERENCE_DATA_PATH = Path("data/reference/reference_data.csv")
 MODEL_OUTPUT_PATH = Path("models/baseline_model.joblib")
 METRICS_OUTPUT_PATH = Path("models/baseline_metrics.txt")
+
+# Constants 
+TARGET_COLUMN = "Churn"
+POSITIVE_LABEL = "Yes" # Positive class for churn
 
 # Loading reference data
 df = pd.read_csv(REFERENCE_DATA_PATH)
@@ -32,10 +44,11 @@ TARGET_COLUMN = "Churn"
 X = df.drop(columns=[TARGET_COLUMN])
 y = df[TARGET_COLUMN]
 
+# Feature types 
 categorical_features = X.select_dtypes(include=["object"]).columns
 numerical_features = X.select_dtypes(exclude=["object"]).columns
 
-# Preprocessing pipeline
+# Preprocessing pipeline 
 preprocessor = ColumnTransformer(
     transformers=[
         (
@@ -75,12 +88,12 @@ X_train, X_val, y_train, y_val = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# Train model
+# Training model
 
 model.fit(X_train, y_train)
 
 # Evaluate baseline
-y_pred = model.predict(X_val)
+y_pred = model.predict(X_val) 
 y_pred_proba = model.predict_proba(X_val)[:, 1]
 
 report = classification_report(y_val, y_pred)
