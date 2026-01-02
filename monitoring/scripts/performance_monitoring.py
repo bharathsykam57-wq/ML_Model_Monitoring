@@ -4,16 +4,18 @@ import joblib
 from sklearn.metrics import precision_score, recall_score, roc_auc_score
 from datetime import datetime
 
-# Paths
+# Configuration
+POSITIVE_LABEL = "Yes"
+
 MODEL_PATH = Path("models/baseline_model.joblib")
 PRODUCTION_BATCH_DIR = Path("data/production_batches")
 
-# Snapshot report (overwrite each run)
+# Snapshot report (overwritten each run)
 SNAPSHOT_OUTPUT_PATH = Path(
     "monitoring/performance_reports/model_performance.csv"
 )
 
-# Time-series metrics store (append over time)
+# Time-series metrics store (append-only)
 METRICS_STORE_PATH = Path(
     "monitoring/metrics_store/performance_metrics.csv"
 )
@@ -26,37 +28,49 @@ model = joblib.load(MODEL_PATH)
 
 snapshot_records = []
 
-# Processing each production batch
+# Processing production batches
 for batch_file in sorted(PRODUCTION_BATCH_DIR.glob("production_batch_*.csv")):
     batch_df = pd.read_csv(batch_file)
 
-    # Schema consistency (critical for production)
+    # Enforcing schema consistency (as done in training)
     for col in batch_df.select_dtypes(include=["object"]).columns:
         batch_df[col] = batch_df[col].astype(str)
+
+    batch_size = len(batch_df)
 
     X = batch_df.drop(columns=["Churn"])
     y_true = batch_df["Churn"]
 
-    # Predictions
+    # Predictions 
     y_pred = model.predict(X)
     y_pred_proba = model.predict_proba(X)[:, 1]
 
-    precision = precision_score(y_true, y_pred, pos_label="Yes")
-    recall = recall_score(y_true, y_pred, pos_label="Yes")
-    roc_auc = roc_auc_score((y_true == "Yes").astype(int), y_pred_proba)
+    precision = precision_score(
+        y_true, y_pred, pos_label=POSITIVE_LABEL
+    )
+    recall = recall_score(
+        y_true, y_pred, pos_label=POSITIVE_LABEL
+    )
+    roc_auc = roc_auc_score(
+        (y_true == POSITIVE_LABEL).astype(int),
+        y_pred_proba
+    )
 
-    # Snapshot record (one row per batch)
+    # Snapshot record for this batch 
     snapshot_records.append({
         "batch": batch_file.stem,
+        "batch_size": batch_size,
         "precision": precision,
         "recall": recall,
         "roc_auc": roc_auc
     })
 
-    # Persistent metrics store (time series)
+    
+    # Time-series metrics store
     metrics_row = pd.DataFrame([{
         "timestamp": datetime.utcnow(),
         "batch": batch_file.stem,
+        "batch_size": batch_size,
         "precision": precision,
         "recall": recall,
         "roc_auc": roc_auc
@@ -64,13 +78,20 @@ for batch_file in sorted(PRODUCTION_BATCH_DIR.glob("production_batch_*.csv")):
 
     if METRICS_STORE_PATH.exists():
         metrics_row.to_csv(
-            METRICS_STORE_PATH, mode="a", header=False, index=False
+            METRICS_STORE_PATH,
+            mode="a",
+            header=False,
+            index=False
         )
     else:
-        metrics_row.to_csv(METRICS_STORE_PATH, index=False)
+        metrics_row.to_csv(
+            METRICS_STORE_PATH,
+            index=False
+        )
 
 # Saving snapshot report
+
 snapshot_df = pd.DataFrame(snapshot_records)
 snapshot_df.to_csv(SNAPSHOT_OUTPUT_PATH, index=False)
 
-print("performance metrics generated successfully.")
+print("Performance monitoring metrics generated successfully.")
