@@ -70,7 +70,7 @@ def recommend_action(batch_name: str):
             if action != "RETRAIN":
                 action = "ESCALATE_FAIRNESS"
 
-    # Save decision
+    # Save decision record
     decision_record = {
         "timestamp": datetime.utcnow(),
         "batch": batch_name,
