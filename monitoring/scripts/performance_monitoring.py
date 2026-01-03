@@ -4,13 +4,13 @@ import joblib
 from sklearn.metrics import precision_score, recall_score, roc_auc_score
 from datetime import datetime
 
-# Configuration
+# Configuration 
 POSITIVE_LABEL = "Yes"
 
 MODEL_PATH = Path("models/baseline_model.joblib")
 PRODUCTION_BATCH_DIR = Path("data/production_batches")
 
-# Snapshot report (overwritten each run)
+# Snapshot report path 
 SNAPSHOT_OUTPUT_PATH = Path(
     "monitoring/performance_reports/model_performance.csv"
 )
