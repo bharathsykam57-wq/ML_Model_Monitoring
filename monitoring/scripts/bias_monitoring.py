@@ -30,7 +30,7 @@ records = []
 for batch_file in sorted(PRODUCTION_BATCH_DIR.glob("production_batch_*.csv")):
     df = pd.read_csv(batch_file)
 
-    # Schema consistency
+    # Schema consistency (must be same training)
     for col in df.select_dtypes(include=["object"]).columns:
         df[col] = df[col].astype(str)
 
