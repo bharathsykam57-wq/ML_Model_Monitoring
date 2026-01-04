@@ -18,6 +18,7 @@ BIAS_METRICS_PATH = Path("monitoring/metrics_store/bias_metrics.csv")
 BIAS_METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 # Configuration
+POSITIVE_LABEL = "Yes"
 SENSITIVE_FEATURES = ["gender", "SeniorCitizen", "Partner"]
 MIN_GROUP_SIZE = 30
 
@@ -52,7 +53,7 @@ for batch_file in sorted(PRODUCTION_BATCH_DIR.glob("production_batch_*.csv")):
             recall = recall_score(
                 y_all[mask],
                 y_pred_all[mask],
-                pos_label="Yes"
+                pos_label=POSITIVE_LABEL
             )
 
             records.append({
