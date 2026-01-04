@@ -1,22 +1,19 @@
 """
 Alert Engine for ML Model Monitoring
 
-This module reads stored monitoring metrics (performance, drift, bias)
+Reads stored monitoring metrics (performance, drift, bias)
 and raises alerts when predefined thresholds are violated.
-
-Alerts are printed to console (can later be extended to email/Slack).
 """
 
 import pandas as pd
 from pathlib import Path
 
-# Paths to metric stores
+# Metric store paths
 PERFORMANCE_METRICS_PATH = Path("monitoring/metrics_store/performance_metrics.csv")
 BIAS_METRICS_PATH = Path("monitoring/metrics_store/bias_metrics.csv")
 DRIFT_METRICS_PATH = Path("monitoring/metrics_store/drift_metrics.csv")
 
-
-# Alert thresholds 
+# Alert thresholds
 PERFORMANCE_THRESHOLDS = {
     "precision_min": 0.60,
     "recall_min": 0.55,
@@ -24,21 +21,23 @@ PERFORMANCE_THRESHOLDS = {
 }
 
 DRIFT_THRESHOLDS = {
-    "high_drift_count": 2  # number of HIGH drift features allowed per batch
+    "max_high_drift_features": 2
 }
 
 BIAS_THRESHOLDS = {
-    "max_recall_gap": 0.15  # max allowed difference between groups
+    "max_recall_gap": 0.15
 }
 
 
-# Performance alerts
 def check_performance_alerts():
     if not PERFORMANCE_METRICS_PATH.exists():
         print("Performance metrics file not found.")
         return
 
     df = pd.read_csv(PERFORMANCE_METRICS_PATH)
+    if df.empty:
+        print("Performance metrics file is empty.")
+        return
 
     latest = df.sort_values("timestamp").iloc[-1]
 
@@ -61,36 +60,39 @@ def check_performance_alerts():
         print("Performance within acceptable thresholds.")
 
 
-# Drift alerts
 def check_drift_alerts():
     if not DRIFT_METRICS_PATH.exists():
         print("Drift metrics file not found.")
         return
 
     df = pd.read_csv(DRIFT_METRICS_PATH)
+    if df.empty:
+        print("Drift metrics file is empty.")
+        return
 
     latest_batch = df.sort_values("timestamp")["batch"].iloc[-1]
     batch_df = df[df["batch"] == latest_batch]
 
     high_drift_features = batch_df[batch_df["drift_level"] == "HIGH"]
 
-    if len(high_drift_features) >= DRIFT_THRESHOLDS["high_drift_count"]:
+    if len(high_drift_features) > DRIFT_THRESHOLDS["max_high_drift_features"]:
         print(f" DRIFT ALERT ({latest_batch})")
         print(f"  High drift detected in {len(high_drift_features)} features:")
         for feature in high_drift_features["feature"]:
             print(f"  - {feature}")
     else:
-        print(" Drift levels acceptable.")
+        print("Drift levels acceptable.")
 
 
-
-# Bias alerts
 def check_bias_alerts():
     if not BIAS_METRICS_PATH.exists():
         print("Bias metrics file not found.")
         return
 
     df = pd.read_csv(BIAS_METRICS_PATH)
+    if df.empty:
+        print("Bias metrics file is empty.")
+        return
 
     latest_batch = df.sort_values("timestamp")["batch"].iloc[-1]
     batch_df = df[df["batch"] == latest_batch]
@@ -100,11 +102,17 @@ def check_bias_alerts():
     for feature in batch_df["feature"].unique():
         feature_df = batch_df[batch_df["feature"] == feature]
 
+        # Skip if only one group present
+        if feature_df["group"].nunique() < 2:
+            continue
+
         recall_gap = feature_df["recall"].max() - feature_df["recall"].min()
 
         if recall_gap > BIAS_THRESHOLDS["max_recall_gap"]:
-            alerts_triggered = True
-            print(f" BIAS ALERT ({latest_batch})")
+            if not alerts_triggered:
+                print(f" BIAS ALERT ({latest_batch})")
+                alerts_triggered = True
+
             print(f"  Feature: {feature}")
             print(f"  Recall gap: {recall_gap:.3f}")
 
@@ -112,7 +120,6 @@ def check_bias_alerts():
         print("No significant bias detected.")
 
 
-# Main execution
 def run_all_alerts():
     print("\n RUNNING ALERT ENGINE")
     check_performance_alerts()
