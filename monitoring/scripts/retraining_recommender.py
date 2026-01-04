@@ -1,6 +1,6 @@
 """
-Translate monitoring signals (performance, drift, bias)
-into a concrete human decision: retrain or not.
+Translating monitoring signals (performance, drift, bias)
+into a concrete human decision: retrain or not. 
 """
 
 from pathlib import Path
@@ -21,10 +21,20 @@ MIN_PRECISION = 0.60
 MAX_ALLOWED_HIGH_DRIFT = 2
 MAX_BIAS_GAP = 0.15
 
+# Ensuring metric files exist
+if not PERFORMANCE_PATH.exists():
+    raise RuntimeError("Performance metrics not found")
+
+if not DRIFT_PATH.exists():
+    raise RuntimeError("Drift metrics not found")
+
+if not BIAS_PATH.exists():
+    raise RuntimeError("Bias metrics not found")
+
 
 def recommend_action(batch_name: str):
     """
-    Evaluate all monitoring signals for a batch
+    Evaluating all monitoring signals for a batch
     and return an action + reasons.
     """
 
@@ -87,8 +97,9 @@ def recommend_action(batch_name: str):
 
     return decision_record
 
-
-# Run for latest batch
+# Action precedence: 
+# RETRAIN > ESCALATE_FAIRNESS > NO_ACTION 
+# Run for latest batch only
 if __name__ == "__main__":
     perf_df = pd.read_csv(PERFORMANCE_PATH)
     latest_batch = perf_df["batch"].iloc[-1]
