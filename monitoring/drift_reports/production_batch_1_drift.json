@@ -4,274 +4,291 @@
     "production_mean":0.164,
     "mean_difference":0.0025798817,
     "reference_std":0.3679615606,
-    "production_std":0.370646405
+    "production_std":0.370646405,
+    "reference_missing_rate":0.0,
+    "production_missing_rate":0.0,
+    "psi":0.0000488556
   },
   "tenure":{
     "reference_mean":32.4428402367,
     "production_mean":32.01,
     "mean_difference":-0.4328402367,
     "reference_std":24.629183837,
-    "production_std":24.5556482244
+    "production_std":24.5556482244,
+    "reference_missing_rate":0.0,
+    "production_missing_rate":0.0,
+    "psi":0.0211699281
   },
   "MonthlyCharges":{
     "reference_mean":64.8945088757,
     "production_mean":64.3883,
     "mean_difference":-0.5062088757,
     "reference_std":30.3260021577,
-    "production_std":29.7597835601
+    "production_std":29.7597835601,
+    "reference_missing_rate":0.0,
+    "production_missing_rate":0.0,
+    "psi":0.015352199
   },
   "TotalCharges":{
     "reference_mean":2299.2988975818,
     "production_mean":2230.5724448898,
     "mean_difference":-68.726452692,
     "reference_std":2287.7817224702,
-    "production_std":2200.3672701851
+    "production_std":2200.3672701851,
+    "reference_missing_rate":0.0016568047,
+    "production_missing_rate":0.002,
+    "psi":0.0314875161
   },
   "gender":{
-    "Female":{
-      "reference_freq":0.4970414201,
-      "production_freq":0.524,
-      "freq_difference":0.0269585799
-    },
-    "Male":{
-      "reference_freq":0.5029585799,
-      "production_freq":0.476,
-      "freq_difference":-0.0269585799
+    "psi":0.0029090542,
+    "distribution_shift":{
+      "Female":{
+        "reference_freq":0.4970414201,
+        "production_freq":0.524
+      },
+      "Male":{
+        "reference_freq":0.5029585799,
+        "production_freq":0.476
+      }
     }
   },
   "Partner":{
-    "No":{
-      "reference_freq":0.5183431953,
-      "production_freq":0.512,
-      "freq_difference":-0.0063431953
-    },
-    "Yes":{
-      "reference_freq":0.4816568047,
-      "production_freq":0.488,
-      "freq_difference":0.0063431953
+    "psi":0.000161095,
+    "distribution_shift":{
+      "Yes":{
+        "reference_freq":0.4816568047,
+        "production_freq":0.488
+      },
+      "No":{
+        "reference_freq":0.5183431953,
+        "production_freq":0.512
+      }
     }
   },
   "Dependents":{
-    "No":{
-      "reference_freq":0.7017751479,
-      "production_freq":0.704,
-      "freq_difference":0.0022248521
-    },
-    "Yes":{
-      "reference_freq":0.2982248521,
-      "production_freq":0.296,
-      "freq_difference":-0.0022248521
+    "psi":0.0000237027,
+    "distribution_shift":{
+      "Yes":{
+        "reference_freq":0.2982248521,
+        "production_freq":0.296
+      },
+      "No":{
+        "reference_freq":0.7017751479,
+        "production_freq":0.704
+      }
     }
   },
   "PhoneService":{
-    "Yes":{
-      "reference_freq":0.9020118343,
-      "production_freq":0.892,
-      "freq_difference":-0.0100118343
-    },
-    "No":{
-      "reference_freq":0.0979881657,
-      "production_freq":0.108,
-      "freq_difference":0.0100118343
+    "psi":0.0010857436,
+    "distribution_shift":{
+      "Yes":{
+        "reference_freq":0.9020118343,
+        "production_freq":0.892
+      },
+      "No":{
+        "reference_freq":0.0979881657,
+        "production_freq":0.108
+      }
     }
   },
   "MultipleLines":{
-    "No":{
-      "reference_freq":0.4795266272,
-      "production_freq":0.506,
-      "freq_difference":0.0264733728
-    },
-    "Yes":{
-      "reference_freq":0.4224852071,
-      "production_freq":0.386,
-      "freq_difference":-0.0364852071
-    },
-    "No phone service":{
-      "reference_freq":0.0979881657,
-      "production_freq":0.108,
-      "freq_difference":0.0100118343
+    "psi":0.0056918393,
+    "distribution_shift":{
+      "Yes":{
+        "reference_freq":0.4224852071,
+        "production_freq":0.386
+      },
+      "No":{
+        "reference_freq":0.4795266272,
+        "production_freq":0.506
+      },
+      "No phone service":{
+        "reference_freq":0.0979881657,
+        "production_freq":0.108
+      }
     }
   },
   "InternetService":{
-    "Fiber optic":{
-      "reference_freq":0.44,
-      "production_freq":0.436,
-      "freq_difference":-0.004
-    },
-    "No":{
-      "reference_freq":0.2201183432,
-      "production_freq":0.206,
-      "freq_difference":-0.0141183432
-    },
-    "DSL":{
-      "reference_freq":0.3398816568,
-      "production_freq":0.358,
-      "freq_difference":0.0181183432
+    "psi":0.0019134082,
+    "distribution_shift":{
+      "DSL":{
+        "reference_freq":0.3398816568,
+        "production_freq":0.358
+      },
+      "No":{
+        "reference_freq":0.2201183432,
+        "production_freq":0.206
+      },
+      "Fiber optic":{
+        "reference_freq":0.44,
+        "production_freq":0.436
+      }
     }
   },
   "OnlineSecurity":{
-    "No":{
-      "reference_freq":0.4906508876,
-      "production_freq":0.504,
-      "freq_difference":0.0133491124
-    },
-    "Yes":{
-      "reference_freq":0.2892307692,
-      "production_freq":0.29,
-      "freq_difference":0.0007692308
-    },
-    "No internet service":{
-      "reference_freq":0.2201183432,
-      "production_freq":0.206,
-      "freq_difference":-0.0141183432
+    "psi":0.001296272,
+    "distribution_shift":{
+      "No internet service":{
+        "reference_freq":0.2201183432,
+        "production_freq":0.206
+      },
+      "Yes":{
+        "reference_freq":0.2892307692,
+        "production_freq":0.29
+      },
+      "No":{
+        "reference_freq":0.4906508876,
+        "production_freq":0.504
+      }
     }
   },
   "OnlineBackup":{
-    "No":{
-      "reference_freq":0.4312426036,
-      "production_freq":0.468,
-      "freq_difference":0.0367573964
-    },
-    "Yes":{
-      "reference_freq":0.3486390533,
-      "production_freq":0.326,
-      "freq_difference":-0.0226390533
-    },
-    "No internet service":{
-      "reference_freq":0.2201183432,
-      "production_freq":0.206,
-      "freq_difference":-0.0141183432
+    "psi":0.0054625363,
+    "distribution_shift":{
+      "No internet service":{
+        "reference_freq":0.2201183432,
+        "production_freq":0.206
+      },
+      "Yes":{
+        "reference_freq":0.3486390533,
+        "production_freq":0.326
+      },
+      "No":{
+        "reference_freq":0.4312426036,
+        "production_freq":0.468
+      }
     }
   },
   "DeviceProtection":{
-    "No":{
-      "reference_freq":0.4307692308,
-      "production_freq":0.44,
-      "freq_difference":0.0092307692
-    },
-    "Yes":{
-      "reference_freq":0.349112426,
-      "production_freq":0.354,
-      "freq_difference":0.004887574
-    },
-    "No internet service":{
-      "reference_freq":0.2201183432,
-      "production_freq":0.206,
-      "freq_difference":-0.0141183432
+    "psi":0.0011995572,
+    "distribution_shift":{
+      "No internet service":{
+        "reference_freq":0.2201183432,
+        "production_freq":0.206
+      },
+      "Yes":{
+        "reference_freq":0.349112426,
+        "production_freq":0.354
+      },
+      "No":{
+        "reference_freq":0.4307692308,
+        "production_freq":0.44
+      }
     }
   },
   "TechSupport":{
-    "No":{
-      "reference_freq":0.4828402367,
-      "production_freq":0.524,
-      "freq_difference":0.0411597633
-    },
-    "Yes":{
-      "reference_freq":0.2970414201,
-      "production_freq":0.27,
-      "freq_difference":-0.0270414201
-    },
-    "No internet service":{
-      "reference_freq":0.2201183432,
-      "production_freq":0.206,
-      "freq_difference":-0.0141183432
+    "psi":0.0068840964,
+    "distribution_shift":{
+      "No internet service":{
+        "reference_freq":0.2201183432,
+        "production_freq":0.206
+      },
+      "Yes":{
+        "reference_freq":0.2970414201,
+        "production_freq":0.27
+      },
+      "No":{
+        "reference_freq":0.4828402367,
+        "production_freq":0.524
+      }
     }
   },
   "StreamingTV":{
-    "Yes":{
-      "reference_freq":0.3959763314,
-      "production_freq":0.386,
-      "freq_difference":-0.0099763314
-    },
-    "No":{
-      "reference_freq":0.3839053254,
-      "production_freq":0.408,
-      "freq_difference":0.0240946746
-    },
-    "No internet service":{
-      "reference_freq":0.2201183432,
-      "production_freq":0.206,
-      "freq_difference":-0.0141183432
+    "psi":0.0026571316,
+    "distribution_shift":{
+      "No internet service":{
+        "reference_freq":0.2201183432,
+        "production_freq":0.206
+      },
+      "Yes":{
+        "reference_freq":0.3959763314,
+        "production_freq":0.386
+      },
+      "No":{
+        "reference_freq":0.3839053254,
+        "production_freq":0.408
+      }
     }
   },
   "StreamingMovies":{
-    "Yes":{
-      "reference_freq":0.3905325444,
-      "production_freq":0.386,
-      "freq_difference":-0.0045325444
-    },
-    "No":{
-      "reference_freq":0.3893491124,
-      "production_freq":0.408,
-      "freq_difference":0.0186508876
-    },
-    "No internet service":{
-      "reference_freq":0.2201183432,
-      "production_freq":0.206,
-      "freq_difference":-0.0141183432
+    "psi":0.0018614951,
+    "distribution_shift":{
+      "No internet service":{
+        "reference_freq":0.2201183432,
+        "production_freq":0.206
+      },
+      "Yes":{
+        "reference_freq":0.3905325444,
+        "production_freq":0.386
+      },
+      "No":{
+        "reference_freq":0.3893491124,
+        "production_freq":0.408
+      }
     }
   },
   "Contract":{
-    "One year":{
-      "reference_freq":0.2120710059,
-      "production_freq":0.21,
-      "freq_difference":-0.0020710059
-    },
-    "Two year":{
-      "reference_freq":0.2426035503,
-      "production_freq":0.226,
-      "freq_difference":-0.0166035503
-    },
-    "Month-to-month":{
-      "reference_freq":0.5453254438,
-      "production_freq":0.564,
-      "freq_difference":0.0186745562
+    "psi":0.0018262102,
+    "distribution_shift":{
+      "Two year":{
+        "reference_freq":0.2426035503,
+        "production_freq":0.226
+      },
+      "Month-to-month":{
+        "reference_freq":0.5453254438,
+        "production_freq":0.564
+      },
+      "One year":{
+        "reference_freq":0.2120710059,
+        "production_freq":0.21
+      }
     }
   },
   "PaperlessBilling":{
-    "Yes":{
-      "reference_freq":0.584852071,
-      "production_freq":0.596,
-      "freq_difference":0.011147929
-    },
-    "No":{
-      "reference_freq":0.415147929,
-      "production_freq":0.404,
-      "freq_difference":-0.011147929
+    "psi":0.0005139391,
+    "distribution_shift":{
+      "Yes":{
+        "reference_freq":0.584852071,
+        "production_freq":0.596
+      },
+      "No":{
+        "reference_freq":0.415147929,
+        "production_freq":0.404
+      }
     }
   },
   "PaymentMethod":{
-    "Mailed check":{
-      "reference_freq":0.2288757396,
-      "production_freq":0.224,
-      "freq_difference":-0.0048757396
-    },
-    "Credit card (automatic)":{
-      "reference_freq":0.2165680473,
-      "production_freq":0.21,
-      "freq_difference":-0.0065680473
-    },
-    "Bank transfer (automatic)":{
-      "reference_freq":0.2208284024,
-      "production_freq":0.234,
-      "freq_difference":0.0131715976
-    },
-    "Electronic check":{
-      "reference_freq":0.3337278107,
-      "production_freq":0.332,
-      "freq_difference":-0.0017278107
+    "psi":0.0010793356,
+    "distribution_shift":{
+      "Electronic check":{
+        "reference_freq":0.3337278107,
+        "production_freq":0.332
+      },
+      "Bank transfer (automatic)":{
+        "reference_freq":0.2208284024,
+        "production_freq":0.234
+      },
+      "Credit card (automatic)":{
+        "reference_freq":0.2165680473,
+        "production_freq":0.21
+      },
+      "Mailed check":{
+        "reference_freq":0.2288757396,
+        "production_freq":0.224
+      }
     }
   },
   "Churn":{
-    "No":{
-      "reference_freq":0.7346745562,
-      "production_freq":0.734,
-      "freq_difference":-0.0006745562
-    },
-    "Yes":{
-      "reference_freq":0.2653254438,
-      "production_freq":0.266,
-      "freq_difference":0.0006745562
+    "psi":0.0000023324,
+    "distribution_shift":{
+      "Yes":{
+        "reference_freq":0.2653254438,
+        "production_freq":0.266
+      },
+      "No":{
+        "reference_freq":0.7346745562,
+        "production_freq":0.734
+      }
     }
   }
 }
