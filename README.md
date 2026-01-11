@@ -101,7 +101,7 @@ Early detection of drift, performance drops, and bias enables teams to **interve
   - RETRAIN  
   - ESCALATE_FAIRNESS  
 
-## Dataset
+## Dataset review
 
 - **IBM Telco Customer Churn Dataset**
 - Includes demographics, services, pricing, and churn labels  
